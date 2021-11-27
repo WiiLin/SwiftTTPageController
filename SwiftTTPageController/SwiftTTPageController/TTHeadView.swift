@@ -44,8 +44,11 @@ public struct TTHeadTextAttribute {
 open class TTHeadView: UIView {
     ///TTHeadView属性
     var textAttribute:TTHeadTextAttribute!
-    
+    public var currentIndex: Int {
+        return _currentIndex
+    }
     fileprivate var _titles :[String]!
+    fileprivate var _images :[(normal: UIImage, selected: UIImage)]!
     fileprivate var _currentIndex: Int = 0//current selected
     fileprivate weak var _delegate:TTHeadViewDelegate?
     
@@ -69,12 +72,14 @@ open class TTHeadView: UIView {
    /// 初始化TTHeadView
    public init(frame:CGRect,
                titles:[String],
+               images:[(normal: UIImage, selected: UIImage)],
                delegate:TTHeadViewDelegate? = nil,
                textAttributes:TTHeadTextAttribute = TTHeadTextAttribute())
    {
         super.init(frame:frame)
     
         _titles = titles
+        _images = images
         _delegate = delegate
         textAttribute = textAttributes
     
@@ -97,6 +102,11 @@ open class TTHeadView: UIView {
             _collectionView.addSubview(_bottomLine)
         }
 
+    }
+    
+    public func updateTitles(titles :[String]) {
+        _titles = titles
+        _collectionView.reloadData()
     }
     
     //MARK:
@@ -140,7 +150,7 @@ open class TTHeadView: UIView {
         collectionview.showsHorizontalScrollIndicator = false
         collectionview.showsVerticalScrollIndicator = false
         collectionview.backgroundView = nil
-        collectionview.backgroundColor = UIColor.white
+        collectionview.backgroundColor = UIColor.clear
         return collectionview
     }
     
@@ -166,6 +176,14 @@ extension TTHeadView:UICollectionViewDelegate,UICollectionViewDataSource {
         l.textAlignment = .center
         l.text = v
         l.textColor = _currentIndex == indexPath.row ? textAttribute.selectedTextColor:textAttribute.defaultTextColor
+        if _images.count == _titles.count {
+            let image = _currentIndex == indexPath.row ? _images[indexPath.row].selected : _images[indexPath.row].normal
+            let imageView = UIImageView.init(image: image)
+            imageView.frame = CGRect (x: 0, y: 0, width: textAttribute.itemWidth, height: self.frame.height)
+            imageView.contentMode = .center
+            cell.contentView.addSubview(imageView)
+        }
+        
         
         cell.contentView.addSubview(l)
         return cell

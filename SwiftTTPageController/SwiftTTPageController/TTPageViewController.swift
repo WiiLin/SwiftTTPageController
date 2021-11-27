@@ -15,9 +15,11 @@ import UIKit
 open class TTPageViewController: UIViewController {
     
     public var _viewControllers :[UIViewController]!
-    
-    var currentIndex: Int = 0//current selected index
-    
+    public var currentIndex: Int {
+        return _currentIndex
+    }
+    var _currentIndex: Int = 0//current selected index
+    public var isScrollEnabled: Bool = true
     weak var _delegate:TTPageViewControllerDelegate?
     
     var _collectionView:UICollectionView!
@@ -67,8 +69,9 @@ open class TTPageViewController: UIViewController {
         collectionview.delegate  = self
         collectionview.dataSource = self
         collectionview.register(UICollectionViewCell.self, forCellWithReuseIdentifier: String (describing: UICollectionViewCell.self))
-        collectionview.backgroundColor  = UIColor.white
+        collectionview.backgroundColor  = UIColor.clear
         collectionview.isPagingEnabled = true
+        collectionview.isScrollEnabled = isScrollEnabled
         collectionview.showsHorizontalScrollIndicator = false
         collectionview.showsVerticalScrollIndicator = false
         if #available(iOS 11.0, *) {
@@ -81,8 +84,8 @@ open class TTPageViewController: UIViewController {
     }
    
     //Public Method
-   public func scrollToPageAtIndex(_ index:Int) {
-        _collectionView.scrollToItem(at: IndexPath.init(row: index, section: 0), at: .right, animated: false)
+    public func scrollToPageAtIndex(_ index:Int, animated: Bool) {
+        _collectionView.scrollToItem(at: IndexPath.init(row: index, section: 0), at: .right, animated: animated)
     }
     
 }
@@ -126,8 +129,8 @@ extension TTPageViewController:UICollectionViewDelegate,UICollectionViewDataSour
     func _scroll(_ scrollView: UIScrollView) {
         let index = scrollView.contentOffset.x / scrollView.frame.width
         let i = lrintf(Float(index))
-        guard i != currentIndex else{ return }
-        currentIndex = i
+        guard i != _currentIndex else{ return }
+        _currentIndex = i
         
         if let delegate = _delegate {
             delegate.tt_pageControllerSelectedAt(i)

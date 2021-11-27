@@ -21,7 +21,7 @@ class ViewController: UIViewController,TTHeadViewDelegate,TTPageViewControllerDe
         
         //创建headView
         let titles = ["新闻","视频","最新","新闻","视频","最新","军事","头条"]
-        headView = TTHeadView (frame: CGRect (x: 0, y: 0, width: UIScreen.main.bounds.width, height: 35), titles: titles, delegate: self ,textAttributes:attri)
+        headView = TTHeadView (frame: CGRect (x: 0, y: 0, width: UIScreen.main.bounds.width, height: 35), titles: titles, images: [], delegate: self ,textAttributes:attri)
         
         navigationItem.titleView = headView;
         
@@ -39,7 +39,7 @@ class ViewController: UIViewController,TTHeadViewDelegate,TTPageViewControllerDe
     
     /////Delegate methods
     func tt_headViewSelectedAt(_ index: Int) {
-        pagevc.scrollToPageAtIndex(index)
+        pagevc.scrollToPageAtIndex(index, animated: false)
     }
     
     func tt_pageControllerSelectedAt(_ index: Int) {
